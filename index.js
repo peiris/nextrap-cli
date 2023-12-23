@@ -1,11 +1,8 @@
 #!/usr/bin/env node
-import chalk from "chalk";
-import inquirer from "inquirer";
-import { setupPrettier, } from "./utils.js";
+import inquirer from 'inquirer';
+import { setupPrettier, setupShadCnUI, } from './utils.js';
 inquirer
-    .prompt([
-/* Pass your questions in here */
-])
+    .prompt([])
     .then(async (answers) => {
     // await installDevDependencies([
     // 	"tailwindcss",
@@ -18,9 +15,8 @@ inquirer
     // 	"ts-node",
     // 	"@ianvs/prettier-plugin-sort-imports",
     // ]);
-    const rc = await setupPrettier();
-    console.log(rc);
-    console.log(chalk.green("Successfully setup prettier!"));
+    await setupPrettier();
+    await setupShadCnUI();
 })
     .catch((error) => {
     if (error.isTtyError) {

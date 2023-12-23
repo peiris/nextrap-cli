@@ -1,6 +1,6 @@
 {
   "name": "nextrap-cli",
-  "version": "0.0.3",
+  "version": "0.0.5",
   "description": "A CLI to bootrap next.js apps with essential packages",
   "main": "index.js",
   "exports": "./index.js",
@@ -29,5 +29,8 @@
     "prisma": "^5.7.1",
     "tailwindcss": "^3.4.0",
     "ts-node": "^10.9.2"
+  },
+  "engines": {
+    "node": ">=18.13.0"
   }
 }

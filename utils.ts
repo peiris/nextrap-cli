@@ -1,46 +1,60 @@
-import { createSpinner } from "nanospinner";
-import fs from "fs";
-import { execa } from "execa";
+import fs from 'fs'
+import chalk from 'chalk'
+import { $, execa } from 'execa'
+import { createSpinner } from 'nanospinner'
+
+import { config } from './config.js'
 
 export const readPackageJson = async () => {
-	const spinner = createSpinner("Loading package.json");
-	spinner.start();
-	const packageJson = await fs.promises.readFile("package.json", "utf-8");
-	const parsedPackageJson = JSON.parse(packageJson);
-	spinner.stop();
-	return parsedPackageJson;
-};
+  const spinner = createSpinner('Loading package.json')
+  spinner.start()
+  const packageJson = await fs.promises.readFile('package.json', 'utf-8')
+  const parsedPackageJson = JSON.parse(packageJson)
+  spinner.stop()
+  return parsedPackageJson
+}
 
 export const installDependencies = async (dependencies: string[]) => {
-	const spinner = createSpinner("Installing dependencies");
-	spinner.start();
-	await execa("pnpm", ["install", "--save-dev", ...dependencies]);
-	spinner.stop();
-};
+  const spinner = createSpinner('Installing dependencies')
+  spinner.start()
+  await execa('pnpm', ['install', '--save-dev', ...dependencies])
+  spinner.stop()
+}
 
 export const installDevDependencies = async (dependencies: string[]) => {
-	const spinner = createSpinner("Installing dev dependencies");
-	spinner.start();
-	await execa("pnpm", ["install", "--save-dev", ...dependencies]);
-	spinner.stop();
-};
+  const spinner = createSpinner('Installing dev dependencies')
+  spinner.start()
+  await execa('pnpm', ['install', '--save-dev', ...dependencies])
+  spinner.stop()
+}
 
 export const setupPrettier = async () => {
-	const spinner = createSpinner("Setting up prettier");
-	spinner.start();
-	const prettierRc = await fs.promises.readFile(
-		"./templates/.prettierrc",
-		"utf-8"
-	);
-	const prettierIgnore = await fs.promises.readFile(
-		"./templates/.prettierignore",
-		"utf-8"
-	);
+  const spinner = createSpinner(chalk.green('Setting up prettier \n'))
+  spinner.start()
 
-	// add .prettierrc and prettierIgnore to root
-	await fs.promises.writeFile("./.prettierrc", prettierRc);
-	await fs.promises.writeFile("./.prettierignore", prettierIgnore);
+  // promise all to get both prettierRc and prettierIgnore
+  const [prettierRc, prettierIgnore] = await Promise.all([
+    await fetch(config?.templates?.prettier?.rc)
+      .then((res) => res.text())
+      .then((text) => text),
+    await fetch(config?.templates?.prettier?.ignore)
+      .then((res) => res.text())
+      .then((text) => text),
+  ])
 
-	spinner.stop();
-	return prettierRc;
-};
+  // add .prettierrc and prettierIgnore to root
+  await fs.promises.writeFile('./.prettierrc', prettierRc)
+  await fs.promises.writeFile('./.prettierignore', prettierIgnore)
+
+  spinner.stop()
+  return prettierRc
+}
+
+export const setupShadCnUI = async () => {
+  const spinner = createSpinner(chalk.green('Setting up shadcn-ui \n'))
+  spinner.start()
+
+  await $`npx --yes shadcn-ui@latest init --yes`
+
+  spinner.stop()
+}
