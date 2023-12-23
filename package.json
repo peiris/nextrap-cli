@@ -1,0 +1,19 @@
+{
+  "name": "nextrap-cli",
+  "version": "0.0.1",
+  "description": "A CLI to bootrap next.js apps with essential packages",
+  "main": "index.js",
+  "scripts": {
+    "dev": "tsc --watch",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "@khpeiris",
+  "license": "MIT",
+  "dependencies": {
+    "@types/inquirer": "^9.0.7",
+    "chalk": "^5.3.0",
+    "inquirer": "^9.2.12",
+    "nanospinner": "^1.1.0"
+  },
+  "type": "module"
+}
