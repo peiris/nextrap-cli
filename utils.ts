@@ -1,39 +1,154 @@
 import fs from 'fs'
 import chalk from 'chalk'
-import { $, execa } from 'execa'
+import { $ } from 'execa'
 import { createSpinner } from 'nanospinner'
 
 import { config } from './config.js'
 
-export const readPackageJson = async () => {
-  const spinner = createSpinner('Loading package.json')
-  spinner.start()
-  const packageJson = await fs.promises.readFile('package.json', 'utf-8')
-  const parsedPackageJson = JSON.parse(packageJson)
-  spinner.stop()
-  return parsedPackageJson
+export const print = {
+  success: (text: string) => chalk.hex('#a3e635')(text),
+  question: (text: string) => chalk.hex('#4ade80')(text),
+  complete: (text: string) => chalk.hex('#8b5cf6')(text),
+  error: (text: string) => chalk.red(text),
+  progress: (text: string) => chalk.magentaBright(text),
+  info: (text: string) => chalk.magentaBright(text),
+  hint: (text: string) => chalk.gray(text),
+  default: (text: string) => chalk.gray(text),
 }
 
-export const installDependencies = async (dependencies: string[]) => {
-  const spinner = createSpinner('Installing dependencies')
-  spinner.start()
-  await execa('pnpm', ['install', '--save-dev', ...dependencies])
-  spinner.stop()
+export const log = {
+  success: (text: string) => console.log(print.success(text)),
+  complete: (text: string) => console.log(print.complete(text)),
+  error: (text: string) => console.log(print.error(text)),
+  progress: (text: string) => console.log(print.progress(text)),
+  info: (text: string) => console.log(print.info(text)),
+  hint: (text: string) => console.log(print.hint(text)),
+  default: (text: string) => console.log(print.default(text)),
 }
 
-export const installDevDependencies = async (dependencies: string[]) => {
-  const spinner = createSpinner('Installing dev dependencies')
+const startSpinner = (text: string) => {
+  const spinner = createSpinner(print.progress(text))
   spinner.start()
-  await execa('pnpm', ['install', '--save-dev', ...dependencies])
-  spinner.stop()
+  return spinner
 }
 
-export const setupPrettier = async () => {
-  const spinner = createSpinner(chalk.green('Setting up prettier \n'))
-  spinner.start()
+export const createNextApp = async (projectName: string) => {
+  if (projectName !== '.') {
+    await fs.promises
+      .access(projectName)
+      .then(() => {
+        log.error(
+          `Folder with name "${projectName}" already exist. Please choose another name or delete the folder and try again.`,
+        )
+        return process.exit(1)
+      })
+      .catch(() => false)
+  }
 
-  // promise all to get both prettierRc and prettierIgnore
-  const [prettierRc, prettierIgnore] = await Promise.all([
+  const spinner = startSpinner(
+    `Setting up next.js app ${chalk.gray('(This may take a while)')}`,
+  )
+
+  const cmd =
+    await $`npx --yes create-next-app@latest ${projectName} --ts --tailwind --eslint --app --no-src-dir --import-alias @/*`
+
+  spinner.stop()
+
+  return cmd
+}
+
+export const setupShadCnUI = async (template: string) => {
+  const spinner = startSpinner(`Setting up shadcn-ui`)
+
+  await fs.promises.writeFile('./components.json', template)
+  const defaults = config?.defaults?.shadcn?.components
+
+  const existing: string[] = await fs.promises
+    .access('./components/ui')
+    .then(async () => {
+      const existing = await fs.promises.readdir('./components/ui')
+      const sanitized = (existing as string[]).map((component) =>
+        component.replace('.tsx', ''),
+      )
+      return sanitized
+    })
+    .catch(() => {
+      return []
+    })
+
+  const filtered = defaults?.filter(
+    (component) => !existing.includes(component),
+  )
+
+  if (filtered?.length > 0) {
+    const command = await $`npx --yes shadcn-ui@latest add ${filtered}`
+    spinner.stop()
+    return command?.stderr
+  } else {
+    return spinner.stop()
+  }
+}
+
+export const setupIcons = async (pkgMgr: string) => {
+  const spinner = startSpinner(`Setting up Lucide Icons`)
+  const command = await $`${pkgMgr} install lucide-react`
+  spinner.stop()
+  return command?.stderr
+}
+
+export const setupPrisma = async (pkgMgr: string) => {
+  const spinner = startSpinner(`Setting up Prisma`)
+  const prismaExist = await fs.promises
+    .access('./prisma/schema.prisma')
+    .then(() => true)
+    .catch(() => ({
+      message: 'Prisma already exist',
+    }))
+
+  if (!prismaExist) {
+    const installPrisma = await $`${pkgMgr} install --save-dev prisma`.then(
+      async () => await $`npx prisma init --datasource-provider mysql`,
+    )
+    return installPrisma?.stderr
+  }
+
+  return spinner.stop()
+}
+
+export const setupDateFns = async (pkgMgr: string) => {
+  const spinner = startSpinner(`Setting up Date-Fns`)
+  const command = await $`${pkgMgr} install date-fns`
+  spinner.stop()
+  return command?.stderr
+}
+
+export const setupPrettier = async ({
+  prettierignore,
+  prettierrc,
+}: {
+  prettierignore: string
+  prettierrc: string
+}) => {
+  const spinner = startSpinner(`Setting up Prettier`)
+
+  await fs.promises.writeFile('./.prettierrc', prettierrc)
+  await fs.promises.writeFile('./.prettierignore', prettierignore)
+
+  spinner.stop()
+  return 'Files created'
+}
+
+export const fetchTemplates = async () => {
+  const spinner = startSpinner(`Fetching config templates`)
+
+  const [shadcn, prettierrc, prettierignore] = await Promise.all([
+    await fetch(config?.templates?.shadcn?.components)
+      .then((res) => res.text())
+      .then((text) => text)
+      .catch((error) => {
+        log.error(error.message)
+        process.exit(1)
+      }),
     await fetch(config?.templates?.prettier?.rc)
       .then((res) => res.text())
       .then((text) => text),
@@ -42,23 +157,10 @@ export const setupPrettier = async () => {
       .then((text) => text),
   ])
 
-  // add .prettierrc and prettierIgnore to root
-  await fs.promises.writeFile('./.prettierrc', prettierRc)
-  await fs.promises.writeFile('./.prettierignore', prettierIgnore)
-
   spinner.stop()
-  return prettierRc
-}
-
-export const setupShadCnUI = async () => {
-  const spinner = createSpinner(chalk.green('Setting up shadcn-ui \n'))
-  spinner.start()
-
-  const components_json = await fetch(config?.templates?.shadcn?.components)
-    .then((res) => res.text())
-    .then((text) => text)
-
-  await fs.promises.writeFile('./.components.json', components_json)
-
-  spinner.stop()
+  return {
+    shadcn,
+    prettierrc,
+    prettierignore,
+  }
 }

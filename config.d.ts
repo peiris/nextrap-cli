@@ -8,4 +8,14 @@ export declare const config: {
             components: string;
         };
     };
+    defaults: {
+        shadcn: {
+            components: string[];
+        };
+    };
 };
+export declare const cliPkgs: {
+    name: string;
+    value: string;
+    checked: boolean;
+}[];
