@@ -13,6 +13,8 @@ export const config = {
     },
     utils:
       'https://raw.githubusercontent.com/peiris/nextrap-cli/main/templates/utils.ts',
+    tailwind:
+      'https://raw.githubusercontent.com/peiris/nextrap-cli/main/templates/tailwind.config.ts',
   },
   defaults: {
     shadcn: {

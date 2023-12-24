@@ -20,6 +20,7 @@ export declare const log: {
 export declare const installRequiredPkgs: (pkgMgr: string) => Promise<string>;
 export declare const baseSetup: (templates: {
     utils: string;
+    tailwindconfig: string;
 }) => Promise<string>;
 export declare const createNextApp: (projectName: string) => Promise<import("execa").ExecaReturnValue<string>>;
 export declare const setupShadCnUI: (template: string) => Promise<string | import("nanospinner").Spinner>;
@@ -37,4 +38,5 @@ export declare const fetchTemplates: () => Promise<{
     prettierrc: string;
     prettierignore: string;
     utils: string;
+    tailwindconfig: string;
 }>;

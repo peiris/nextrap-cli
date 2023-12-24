@@ -8,6 +8,7 @@ export declare const config: {
             components: string;
         };
         utils: string;
+        tailwind: string;
     };
     defaults: {
         shadcn: {

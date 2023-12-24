@@ -1,6 +1,6 @@
 {
   "name": "nextrap-cli",
-  "version": "0.0.33",
+  "version": "0.0.34",
   "description": "A CLI to bootrap next.js apps with essential packages",
   "main": "index.js",
   "exports": "./index.js",

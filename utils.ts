@@ -39,7 +39,10 @@ export const installRequiredPkgs = async (pkgMgr: string) => {
   return command?.stderr
 }
 
-export const baseSetup = async (templates: { utils: string }) => {
+export const baseSetup = async (templates: {
+  utils: string
+  tailwindconfig: string
+}) => {
   const spinner = startSpinner(`Setting up base files`)
 
   await fs.promises
@@ -48,6 +51,7 @@ export const baseSetup = async (templates: { utils: string }) => {
     .catch(async () => await fs.promises.mkdir('./lib'))
 
   await fs.promises.writeFile('./lib/utils.ts', templates.utils)
+  await fs.promises.writeFile('./tailwind.config.ts', templates.tailwindconfig)
 
   spinner.stop()
   return 'Files created'
@@ -111,14 +115,14 @@ export const setupShadCnUI = async (template: string) => {
 }
 
 export const setupIcons = async (pkgMgr: string) => {
-  const spinner = startSpinner(`Setting up Lucide Icons`)
+  const spinner = startSpinner(`Setting up lucide icons`)
   const command = await $`${pkgMgr} install lucide-react`
   spinner.stop()
   return command?.stderr
 }
 
 export const setupPrisma = async (pkgMgr: string) => {
-  const spinner = startSpinner(`Setting up Prisma`)
+  const spinner = startSpinner(`Setting up prisma`)
   const prismaExist = await fs.promises
     .access('./prisma/schema.prisma')
     .then(() => true)
@@ -137,7 +141,7 @@ export const setupPrisma = async (pkgMgr: string) => {
 }
 
 export const setupDateFns = async (pkgMgr: string) => {
-  const spinner = startSpinner(`Setting up Date-Fns`)
+  const spinner = startSpinner(`Setting up date-fns`)
   const command = await $`${pkgMgr} install date-fns`
   spinner.stop()
   return command?.stderr
@@ -167,24 +171,26 @@ export const setupPrettier = async ({
 export const fetchTemplates = async () => {
   const spinner = startSpinner(`Fetching config templates`)
 
-  const [shadcn, prettierrc, prettierignore, utils] = await Promise.all([
-    await fetch(config?.templates?.shadcn?.components)
-      .then((res) => res.text())
-      .then((text) => text)
-      .catch((error) => {
-        log.error(error.message)
-        process.exit(1)
-      }),
-    await fetch(config?.templates?.prettier?.rc)
-      .then((res) => res.text())
-      .then((text) => text),
-    await fetch(config?.templates?.prettier?.ignore)
-      .then((res) => res.text())
-      .then((text) => text),
-    await fetch(config?.templates?.utils)
-      .then((res) => res.text())
-      .then((text) => text),
-  ])
+  const [shadcn, prettierrc, prettierignore, utils, tailwindconfig] =
+    await Promise.all([
+      await fetch(config?.templates?.shadcn?.components)
+        .then((res) => res.text())
+        .then((text) => text)
+        .catch((error) => {
+          log.error(error.message)
+          process.exit(1)
+        }),
+      await fetch(config?.templates?.prettier?.rc)
+        .then((res) => res.text())
+        .then((text) => text),
+      await fetch(config?.templates?.prettier?.ignore)
+        .then((res) => res.text())
+        .then((text) => text),
+      await fetch(config?.templates?.utils)
+        .then((res) => res.text())
+        .then((text) => text),
+      await fetch(config?.templates?.tailwind).then((res) => res.text()),
+    ])
 
   spinner.stop()
   return {
@@ -192,5 +198,6 @@ export const fetchTemplates = async () => {
     prettierrc,
     prettierignore,
     utils,
+    tailwindconfig,
   }
 }
