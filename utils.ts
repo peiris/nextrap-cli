@@ -54,7 +54,11 @@ export const setupShadCnUI = async () => {
   const spinner = createSpinner(chalk.green('Setting up shadcn-ui \n'))
   spinner.start()
 
-  await $`npx --yes shadcn-ui@latest init --yes`
+  const components_json = await fetch(config?.templates?.shadcn?.components)
+    .then((res) => res.text())
+    .then((text) => text)
+
+  await fs.promises.writeFile('./.components.json', components_json)
 
   spinner.stop()
 }

@@ -4,5 +4,8 @@ export declare const config: {
             rc: string;
             ignore: string;
         };
+        shadcn: {
+            components: string;
+        };
     };
 };
