@@ -1,4 +1,3 @@
-/// <reference types="node" />
 export declare const print: {
     success: (text: string) => string;
     question: (text: string) => string;
@@ -18,19 +17,24 @@ export declare const log: {
     hint: (text: string) => void;
     default: (text: string) => void;
 };
-export declare const installRequiredPkgs: (pkgMgr: string) => Promise<import("stream").Readable | null>;
-export declare const baseSetup: (pkgMgr: string) => Promise<void>;
+export declare const installRequiredPkgs: (pkgMgr: string) => Promise<string>;
+export declare const baseSetup: (templates: {
+    utils: string;
+}) => Promise<string>;
 export declare const createNextApp: (projectName: string) => Promise<import("execa").ExecaReturnValue<string>>;
 export declare const setupShadCnUI: (template: string) => Promise<string | import("nanospinner").Spinner>;
 export declare const setupIcons: (pkgMgr: string) => Promise<string>;
 export declare const setupPrisma: (pkgMgr: string) => Promise<string | import("nanospinner").Spinner>;
 export declare const setupDateFns: (pkgMgr: string) => Promise<string>;
-export declare const setupPrettier: ({ prettierignore, prettierrc, }: {
+export declare const setupPrettier: ({ prettierignore, prettierrc, pkgMgr, pkgs, }: {
     prettierignore: string;
     prettierrc: string;
+    pkgMgr: string;
+    pkgs: string[];
 }) => Promise<string>;
 export declare const fetchTemplates: () => Promise<{
     shadcn: string;
     prettierrc: string;
     prettierignore: string;
+    utils: string;
 }>;

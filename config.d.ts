@@ -21,3 +21,4 @@ export declare const cliPkgs: {
     checked: boolean;
 }[];
 export declare const requiredPkgs: string[];
+export declare const prettierPkgs: string[];

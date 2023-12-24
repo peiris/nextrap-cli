@@ -3,7 +3,7 @@ import chalk from 'chalk'
 import { $ } from 'execa'
 import { createSpinner } from 'nanospinner'
 
-import { config, requiredPkgs } from './config.js'
+import { config, prettierPkgs, requiredPkgs } from './config.js'
 
 export const print = {
   success: (text: string) => chalk.hex('#a3e635')(text),
@@ -33,13 +33,25 @@ const startSpinner = (text: string) => {
 }
 
 export const installRequiredPkgs = async (pkgMgr: string) => {
-  const spinner = startSpinner(`Installing required packages`)
-  const command = $`${pkgMgr} install --save-dev ${requiredPkgs.join(' ')}`
+  const spinner = startSpinner(`Setting up required packages`)
+  const command = await $`${pkgMgr} install --save-dev ${requiredPkgs}`
   spinner.stop()
   return command?.stderr
 }
 
-export const baseSetup = async (pkgMgr: string) => {}
+export const baseSetup = async (templates: { utils: string }) => {
+  const spinner = startSpinner(`Setting up base files`)
+
+  await fs.promises
+    .access('./lib')
+    .then(() => true)
+    .catch(async () => await fs.promises.mkdir('./lib'))
+
+  await fs.promises.writeFile('./lib/utils.ts', templates.utils)
+
+  spinner.stop()
+  return 'Files created'
+}
 
 export const createNextApp = async (projectName: string) => {
   if (projectName !== '.') {
@@ -134,17 +146,22 @@ export const setupDateFns = async (pkgMgr: string) => {
 export const setupPrettier = async ({
   prettierignore,
   prettierrc,
+  pkgMgr,
+  pkgs,
 }: {
   prettierignore: string
   prettierrc: string
+  pkgMgr: string
+  pkgs: string[]
 }) => {
-  const spinner = startSpinner(`Setting up Prettier`)
+  const spinner = startSpinner(`Setting up prettier`)
 
   await fs.promises.writeFile('./.prettierrc', prettierrc)
   await fs.promises.writeFile('./.prettierignore', prettierignore)
+  await $`${pkgMgr} install --save-dev  ${prettierPkgs}`
 
   spinner.stop()
-  return 'Files created'
+  return 'Prettier setup complete'
 }
 
 export const fetchTemplates = async () => {
@@ -174,5 +191,6 @@ export const fetchTemplates = async () => {
     shadcn,
     prettierrc,
     prettierignore,
+    utils,
   }
 }

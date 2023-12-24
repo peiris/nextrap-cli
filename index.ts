@@ -7,6 +7,7 @@ import figlet from 'figlet'
 
 import { cliPkgs } from './config.js'
 import {
+  baseSetup,
   createNextApp,
   fetchTemplates,
   installRequiredPkgs,
@@ -91,7 +92,7 @@ const pkgs = await checkbox({
 isFresh
   ? await createNextApp(name)
       .then(async (std) => {
-        process.chdir(name)
+        process.chdir(name) // Change directory to the newly created folder
         return std
       })
       .catch((error) => {
@@ -103,11 +104,18 @@ isFresh
 await setupPrettier({
   prettierignore: configTemplates?.prettierignore,
   prettierrc: configTemplates?.prettierrc,
+  pkgMgr,
+  pkgs,
 }).catch((error) => {
   log.error(error.message)
 })
 
 await installRequiredPkgs(pkgMgr).catch((error) => {
+  log.error(error.message)
+  process.exit(1)
+})
+
+await baseSetup(configTemplates).catch((error) => {
   log.error(error.message)
 })
 

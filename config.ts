@@ -54,4 +54,18 @@ export const cliPkgs = [
   },
 ]
 
-export const requiredPkgs = ['clsx', 'tailwind-merge']
+export const requiredPkgs = [
+  '@tailwindcss/container-queries',
+  '@tailwindcss/typography',
+  'class-variance-authority',
+  'clsx',
+  'tailwind-merge',
+  'tailwindcss-animate',
+]
+
+export const prettierPkgs = [
+  'prettier',
+  'prettier-plugin-tailwindcss',
+  '@ianvs/prettier-plugin-sort-imports',
+  'prettier-plugin-prisma',
+]
