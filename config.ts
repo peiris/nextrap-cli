@@ -11,6 +11,8 @@ export const config = {
       components:
         'https://raw.githubusercontent.com/peiris/nextrap-cli/main/templates/shadcn-components.json',
     },
+    utils:
+      'https://raw.githubusercontent.com/peiris/nextrap-cli/main/templates/utils.ts',
   },
   defaults: {
     shadcn: {
@@ -51,3 +53,5 @@ export const cliPkgs = [
     checked: true,
   },
 ]
+
+export const requiredPkgs = ['clsx', 'tailwind-merge']

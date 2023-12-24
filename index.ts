@@ -9,6 +9,7 @@ import { cliPkgs } from './config.js'
 import {
   createNextApp,
   fetchTemplates,
+  installRequiredPkgs,
   log,
   print,
   setupDateFns,
@@ -49,8 +50,6 @@ const isFresh = await confirm({
     log.error(error?.stderr || error?.message)
     process.exit(1)
   })
-
-console.log(configTemplates)
 
 const name = isFresh
   ? await input({
@@ -93,12 +92,6 @@ isFresh
   ? await createNextApp(name)
       .then(async (std) => {
         process.chdir(name)
-        await setupPrettier({
-          prettierignore: configTemplates?.prettierignore,
-          prettierrc: configTemplates?.prettierrc,
-        }).catch((error) => {
-          log.error(error.message)
-        })
         return std
       })
       .catch((error) => {
@@ -106,6 +99,17 @@ isFresh
         process.exit(1)
       })
   : null
+
+await setupPrettier({
+  prettierignore: configTemplates?.prettierignore,
+  prettierrc: configTemplates?.prettierrc,
+}).catch((error) => {
+  log.error(error.message)
+})
+
+await installRequiredPkgs(pkgMgr).catch((error) => {
+  log.error(error.message)
+})
 
 if (pkgs.includes('shadcn-ui')) {
   await setupShadCnUI(configTemplates?.shadcn).catch((error) => {

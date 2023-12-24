@@ -1,12 +1,12 @@
 {
   "name": "nextrap-cli",
-  "version": "0.0.26",
+  "version": "0.0.28",
   "description": "A CLI to bootrap next.js apps with essential packages",
   "main": "index.js",
   "exports": "./index.js",
   "bin": "./index.js",
   "scripts": {
-    "dev": "tsc --watch",
+    "dev": "tsc -w",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "@khpeiris",

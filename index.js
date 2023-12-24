@@ -5,7 +5,7 @@ import select from '@inquirer/select';
 import chalk from 'chalk';
 import figlet from 'figlet';
 import { cliPkgs } from './config.js';
-import { createNextApp, fetchTemplates, log, print, setupDateFns, setupIcons, setupPrettier, setupPrisma, setupShadCnUI, } from './utils.js';
+import { createNextApp, fetchTemplates, installRequiredPkgs, log, print, setupDateFns, setupIcons, setupPrettier, setupPrisma, setupShadCnUI, } from './utils.js';
 const welcome = figlet.textSync('Nextrap!', {
     font: 'Standard',
     horizontalLayout: 'default',
@@ -28,7 +28,6 @@ const isFresh = await confirm({
     log.error(error?.stderr || error?.message);
     process.exit(1);
 });
-console.log(configTemplates);
 const name = isFresh
     ? await input({
         message: print.question(`What is your project name?`),
@@ -67,12 +66,6 @@ isFresh
     ? await createNextApp(name)
         .then(async (std) => {
         process.chdir(name);
-        await setupPrettier({
-            prettierignore: configTemplates?.prettierignore,
-            prettierrc: configTemplates?.prettierrc,
-        }).catch((error) => {
-            log.error(error.message);
-        });
         return std;
     })
         .catch((error) => {
@@ -80,6 +73,15 @@ isFresh
         process.exit(1);
     })
     : null;
+await setupPrettier({
+    prettierignore: configTemplates?.prettierignore,
+    prettierrc: configTemplates?.prettierrc,
+}).catch((error) => {
+    log.error(error.message);
+});
+await installRequiredPkgs(pkgMgr).catch((error) => {
+    log.error(error.message);
+});
 if (pkgs.includes('shadcn-ui')) {
     await setupShadCnUI(configTemplates?.shadcn).catch((error) => {
         log.error(error.message);

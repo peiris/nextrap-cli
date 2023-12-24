@@ -2,7 +2,7 @@ import fs from 'fs';
 import chalk from 'chalk';
 import { $ } from 'execa';
 import { createSpinner } from 'nanospinner';
-import { config } from './config.js';
+import { config, requiredPkgs } from './config.js';
 export const print = {
     success: (text) => chalk.hex('#a3e635')(text),
     question: (text) => chalk.hex('#4ade80')(text),
@@ -27,6 +27,13 @@ const startSpinner = (text) => {
     spinner.start();
     return spinner;
 };
+export const installRequiredPkgs = async (pkgMgr) => {
+    const spinner = startSpinner(`Installing required packages`);
+    const command = $ `${pkgMgr} install --save-dev ${requiredPkgs.join(' ')}`;
+    spinner.stop();
+    return command?.stderr;
+};
+export const baseSetup = async (pkgMgr) => { };
 export const createNextApp = async (projectName) => {
     if (projectName !== '.') {
         await fs.promises
@@ -101,7 +108,7 @@ export const setupPrettier = async ({ prettierignore, prettierrc, }) => {
 };
 export const fetchTemplates = async () => {
     const spinner = startSpinner(`Fetching config templates`);
-    const [shadcn, prettierrc, prettierignore] = await Promise.all([
+    const [shadcn, prettierrc, prettierignore, utils] = await Promise.all([
         await fetch(config?.templates?.shadcn?.components)
             .then((res) => res.text())
             .then((text) => text)
@@ -113,6 +120,9 @@ export const fetchTemplates = async () => {
             .then((res) => res.text())
             .then((text) => text),
         await fetch(config?.templates?.prettier?.ignore)
+            .then((res) => res.text())
+            .then((text) => text),
+        await fetch(config?.templates?.utils)
             .then((res) => res.text())
             .then((text) => text),
     ]);

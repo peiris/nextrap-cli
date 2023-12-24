@@ -7,6 +7,7 @@ export declare const config: {
         shadcn: {
             components: string;
         };
+        utils: string;
     };
     defaults: {
         shadcn: {
@@ -19,3 +20,4 @@ export declare const cliPkgs: {
     value: string;
     checked: boolean;
 }[];
+export declare const requiredPkgs: string[];
