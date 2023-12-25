@@ -17,15 +17,18 @@ export declare const log: {
     hint: (text: string) => void;
     default: (text: string) => void;
 };
-export declare const installRequiredPkgs: (pkgMgr: string) => Promise<string>;
+export declare const folderExists: (folderName: string) => Promise<boolean>;
 export declare const baseSetup: (templates: {
     utils: string;
     tailwindconfig: string;
 }) => Promise<string>;
 export declare const createNextApp: (projectName: string) => Promise<import("execa").ExecaReturnValue<string>>;
-export declare const setupShadCnUI: (template: string) => Promise<string | import("nanospinner").Spinner>;
+export declare const installRequiredPkgs: (pkgMgr: string) => Promise<string>;
+export declare const setupShadCnUI: (template: string) => Promise<string | undefined>;
 export declare const setupIcons: (pkgMgr: string) => Promise<string>;
-export declare const setupPrisma: (pkgMgr: string) => Promise<string | import("nanospinner").Spinner>;
+export declare const setupPrisma: (pkgMgr: string) => Promise<string | {
+    message: string;
+}>;
 export declare const setupDateFns: (pkgMgr: string) => Promise<string>;
 export declare const setupPrettier: ({ prettierignore, prettierrc, pkgMgr, pkgs, }: {
     prettierignore: string;

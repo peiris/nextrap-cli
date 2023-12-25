@@ -38,7 +38,7 @@ const name = isFresh
         log.error(error?.stderr || error?.message);
         process.exit(1);
     })
-    : 'crepusculum-viduo-app';
+    : '.';
 const pkgMgr = await select({
     message: print.question('Select your package manager'),
     choices: [
