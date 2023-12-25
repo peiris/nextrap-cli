@@ -43,3 +43,4 @@ export declare const fetchTemplates: () => Promise<{
     utils: string;
     tailwindconfig: string;
 }>;
+export declare const finalize: (pkgMgr: string) => Promise<void>;

@@ -10,6 +10,7 @@ import {
   baseSetup,
   createNextApp,
   fetchTemplates,
+  finalize,
   installRequiredPkgs,
   log,
   print,
@@ -22,6 +23,14 @@ import {
 
 const welcome = figlet.textSync('Nextrap!', {
   font: 'Standard',
+  horizontalLayout: 'default',
+  verticalLayout: 'default',
+  width: 60,
+  whitespaceBreak: true,
+})
+
+const complete = figlet.textSync('Completed', {
+  font: 'Ogre',
   horizontalLayout: 'default',
   verticalLayout: 'default',
   width: 60,
@@ -41,7 +50,7 @@ console.log(
 const isFresh = await confirm({
   message: print.question(
     `Is this a fresh install? ${chalk.gray(
-      `(If not we will skip next.js packages)`,
+      `(If not we will skip next.js install)`,
     )}`,
   ),
   default: true,
@@ -89,7 +98,7 @@ const pkgs = await checkbox({
     process.exit(1)
   })
 
-isFresh
+const nextApp = isFresh
   ? await createNextApp(name)
       .then(async (std) => {
         process.chdir(name) // Change directory to the newly created folder
@@ -142,3 +151,8 @@ if (pkgs.includes('date-fns')) {
     log.error(error.message)
   })
 }
+
+await finalize(pkgMgr)
+
+console.log(chalk.hex('#5eead4')(complete))
+console.log(`\n${chalk.hex('#5eead4')('Happy hacking!')}\n`)

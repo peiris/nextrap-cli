@@ -110,18 +110,13 @@ export const setupShadCnUI = async (template: string) => {
   await fs.promises.writeFile('./components.json', template)
   const defaults = config?.shadcn?.components
 
-  const existing: string[] = await fs.promises
-    .access('./components/ui')
-    .then(async () => {
-      const existing = await fs.promises.readdir('./components/ui')
-      const sanitized = (existing as string[]).map((component) =>
-        component.replace('.tsx', ''),
-      )
-      return sanitized
-    })
-    .catch(() => {
-      return []
-    })
+  let existing: string[] = []
+  try {
+    const existingFiles = await fs.promises.readdir('./components/ui')
+    existing = existingFiles.map((component) => component.replace('.tsx', ''))
+  } catch {
+    // Directory does not exist or other error occurred, existing remains empty
+  }
 
   const filtered = defaults?.filter(
     (component) => !existing.includes(component),
@@ -140,13 +135,16 @@ export const setupShadCnUI = async (template: string) => {
       return resultArray
     }, [])
 
-    const spinner = startSpinner(`Setting up essential packages
+    const spinner = startSpinner(`Setting up shadcn-ui
   ${print.hint(`— ${chunks.join('\n  — ')}`)}
-  `)
+    `)
 
-    const command = await $`npx --yes shadcn-ui@latest add ${filtered}`
-    spinner.stop()
-    return command?.stderr
+    try {
+      const command = await $`npx --yes shadcn-ui@latest add ${filtered}`
+      return command?.stderr
+    } finally {
+      spinner.stop()
+    }
   }
 }
 
@@ -245,6 +243,20 @@ export const fetchTemplates = async () => {
       utils,
       tailwindconfig,
     }
+  } finally {
+    spinner.stop()
+  }
+}
+
+export const finalize = async (pkgMgr: string) => {
+  const spinner = startSpinner(`Finalizing`)
+  await fs.promises.rm('./package-lock.json')
+  await fs.promises.rm('./pnpm-lock.yaml')
+
+  try {
+    await $`${pkgMgr} install`
+  } catch (error: any) {
+    log.error(error?.stderr || error?.message)
   } finally {
     spinner.stop()
   }

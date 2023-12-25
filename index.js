@@ -5,9 +5,16 @@ import select from '@inquirer/select';
 import chalk from 'chalk';
 import figlet from 'figlet';
 import { cliPkgs } from './config.js';
-import { baseSetup, createNextApp, fetchTemplates, installRequiredPkgs, log, print, setupDateFns, setupIcons, setupPrettier, setupPrisma, setupShadCnUI, } from './utils.js';
+import { baseSetup, createNextApp, fetchTemplates, finalize, installRequiredPkgs, log, print, setupDateFns, setupIcons, setupPrettier, setupPrisma, setupShadCnUI, } from './utils.js';
 const welcome = figlet.textSync('Nextrap!', {
     font: 'Standard',
+    horizontalLayout: 'default',
+    verticalLayout: 'default',
+    width: 60,
+    whitespaceBreak: true,
+});
+const complete = figlet.textSync('Completed', {
+    font: 'Ogre',
     horizontalLayout: 'default',
     verticalLayout: 'default',
     width: 60,
@@ -20,7 +27,7 @@ const configTemplates = await fetchTemplates().catch(() => {
 console.log(chalk.hex('#fde047')(welcome));
 console.log(chalk.hex('#fde047')(`Bootstrap your next.js project faster than ever!\n`));
 const isFresh = await confirm({
-    message: print.question(`Is this a fresh install? ${chalk.gray(`(If not we will skip next.js packages)`)}`),
+    message: print.question(`Is this a fresh install? ${chalk.gray(`(If not we will skip next.js install)`)}`),
     default: true,
 })
     .then((answers) => answers)
@@ -62,7 +69,7 @@ const pkgs = await checkbox({
     log.error(error?.stderr || error?.message);
     process.exit(1);
 });
-isFresh
+const nextApp = isFresh
     ? await createNextApp(name)
         .then(async (std) => {
         process.chdir(name); // Change directory to the newly created folder
@@ -108,3 +115,6 @@ if (pkgs.includes('date-fns')) {
         log.error(error.message);
     });
 }
+await finalize(pkgMgr);
+console.log(chalk.hex('#5eead4')(complete));
+console.log(`\n${chalk.hex('#5eead4')('Happy hacking!')}\n`);
