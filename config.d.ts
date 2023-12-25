@@ -10,10 +10,8 @@ export declare const config: {
         utils: string;
         tailwind: string;
     };
-    defaults: {
-        shadcn: {
-            components: string[];
-        };
+    shadcn: {
+        components: string[];
     };
 };
 export declare const cliPkgs: {

@@ -33,7 +33,9 @@ const startSpinner = (text: string) => {
 }
 
 export const installRequiredPkgs = async (pkgMgr: string) => {
-  const spinner = startSpinner(`Setting up required packages`)
+  const spinner = startSpinner(`Setting up essential packages
+      ${print.hint(` \n  — ${requiredPkgs.join('\n  — ')}`)}
+  `)
   const command = await $`${pkgMgr} install --save-dev ${requiredPkgs}`
   spinner.stop()
   return command?.stderr
@@ -43,7 +45,9 @@ export const baseSetup = async (templates: {
   utils: string
   tailwindconfig: string
 }) => {
-  const spinner = startSpinner(`Setting up base files`)
+  const spinner = startSpinner(`Setting up utils and tailwind plugins
+      ${print.hint(` \n  — lib/utils.ts \n  — tailwind.config.ts`)}
+  `)
 
   await fs.promises
     .access('./lib')
@@ -86,7 +90,7 @@ export const setupShadCnUI = async (template: string) => {
   const spinner = startSpinner(`Setting up shadcn-ui`)
 
   await fs.promises.writeFile('./components.json', template)
-  const defaults = config?.defaults?.shadcn?.components
+  const defaults = config?.shadcn?.components
 
   const existing: string[] = await fs.promises
     .access('./components/ui')
