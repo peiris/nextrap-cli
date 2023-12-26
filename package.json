@@ -1,12 +1,12 @@
 {
   "name": "nextrap-cli",
-  "version": "0.0.53",
+  "version": "0.0.54",
   "description": "A CLI to bootrap next.js apps with essential packages",
   "bin": "./dist/index.js",
   "scripts": {
     "dev": "tsc -w",
-    "build": "tsc && tsc-alias",
-    "npm-publish": "npm run build && npm publish --access public"
+    "build": "rm -rf dist && tsc && tsc-alias",
+    "npm-publish": "rm tsconfig.tsbuildinfo && npm run build && npm publish --access public"
   },
   "author": "@khpeiris",
   "license": "MIT",

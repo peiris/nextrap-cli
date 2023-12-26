@@ -1,0 +1,6 @@
+src
+templates
+.prettierignore
+.prettierrc
+tsconfig.json
+tsconfig.tsbuildinfo
