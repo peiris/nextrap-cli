@@ -1,25 +1,22 @@
 #!/usr/bin/env node
+import { cliPkgs } from '@/config'
+import { log, print } from '@/utils'
 import { faker } from '@faker-js/faker'
 import { checkbox, confirm, input } from '@inquirer/prompts'
 import select from '@inquirer/select'
 import chalk from 'chalk'
 import figlet from 'figlet'
 
-import { cliPkgs } from './config.js'
-import {
-  baseSetup,
-  createNextApp,
-  fetchTemplates,
-  finalize,
-  installRequiredPkgs,
-  log,
-  print,
-  setupDateFns,
-  setupIcons,
-  setupPrettier,
-  setupPrisma,
-  setupShadCnUI,
-} from './utils.js'
+import { baseSetup } from '@/actions/base-setup'
+import { createNextApp } from '@/actions/create-next-app'
+import { setupDateFns } from '@/actions/date-fns'
+import { fetchTemplates } from '@/actions/fetch-templates'
+import { finalize } from '@/actions/finalize'
+import { setupIcons } from '@/actions/icons'
+import { installPackages } from '@/actions/install-packages'
+import { setupPrettier } from '@/actions/prettier'
+import { setupPrisma } from '@/actions/prisma'
+import { setupShadCnUI } from '@/actions/shad-cn'
 
 const welcome = figlet.textSync('Nextrap!', {
   font: 'Standard',
@@ -98,7 +95,7 @@ const pkgs = await checkbox({
     process.exit(1)
   })
 
-const nextApp = isFresh
+isFresh
   ? await createNextApp(name)
       .then(async (std) => {
         process.chdir(name) // Change directory to the newly created folder
@@ -119,7 +116,7 @@ await setupPrettier({
   log.error(error.message)
 })
 
-await installRequiredPkgs(pkgMgr).catch((error) => {
+await installPackages(pkgMgr).catch((error) => {
   log.error(error.message)
   process.exit(1)
 })

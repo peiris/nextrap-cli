@@ -1,13 +1,12 @@
 {
   "name": "nextrap-cli",
-  "version": "0.0.45",
+  "version": "0.0.53",
   "description": "A CLI to bootrap next.js apps with essential packages",
-  "main": "index.js",
-  "exports": "./index.js",
-  "bin": "./index.js",
+  "bin": "./dist/index.js",
   "scripts": {
     "dev": "tsc -w",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsc && tsc-alias",
+    "npm-publish": "npm run build && npm publish --access public"
   },
   "author": "@khpeiris",
   "license": "MIT",
@@ -22,7 +21,10 @@
     "nanospinner": "^1.1.0"
   },
   "type": "module",
-  "devDependencies": {},
+  "devDependencies": {
+    "@types/figlet": "^1.5.8",
+    "tsc-alias": "^1.8.8"
+  },
   "engines": {
     "node": ">=18.13.0"
   }

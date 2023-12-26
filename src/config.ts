@@ -1,4 +1,4 @@
-import { print } from './utils.js'
+import { print } from '@/utils'
 
 export const config = {
   templates: {
