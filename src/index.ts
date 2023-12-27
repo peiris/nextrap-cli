@@ -107,12 +107,12 @@ const db = pkgs.includes('prisma') ? await select({
   ],
   default: 'mysql',
 })
-  .then((answers) => answers)
+  .then((answer) => answer)
   .catch((error) => {
     log.error(error?.stderr || error?.message)
     process.exit(1)
   })
-: null
+: "mysql"
 
 console.log(db);
 

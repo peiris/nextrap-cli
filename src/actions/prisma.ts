@@ -3,7 +3,7 @@ import { $ } from 'execa'
 
 import { startSpinner } from '@/utils'
 
-export const setupPrisma = async (pkgMgr: string, db?: string | undefined = "mysql") => {
+export const setupPrisma = async (pkgMgr: string, db: string) => {
   const spinner = startSpinner(`Setting up prisma`)
 
   try {
