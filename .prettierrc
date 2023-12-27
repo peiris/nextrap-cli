@@ -7,9 +7,7 @@
   "tabWidth": 2,
   "endOfLine": "lf",
   "plugins": [
-    "@ianvs/prettier-plugin-sort-imports",
-    "prettier-plugin-tailwindcss",
-    "prettier-plugin-prisma"
+    "@ianvs/prettier-plugin-sort-imports"
   ],
   "importOrder": [
     "^@/styles/(.*)$",
