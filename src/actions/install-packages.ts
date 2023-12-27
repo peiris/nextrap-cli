@@ -9,9 +9,7 @@ export const installPackages = async (pkgMgr: string) => {
   `)
 
   try {
-    // Determine the correct command string based on the package manager
     const commandString = pkgMgr === 'npm' ? 'install --save-dev' : 'add --save-dev';
-
     const command = await $`${pkgMgr} ${commandString} ${requiredPkgs}`;
     return command?.stderr;
   } finally {

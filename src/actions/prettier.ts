@@ -22,7 +22,9 @@ export const setupPrettier = async ({
   try {
     await fs.promises.writeFile('./.prettierrc', prettierrc)
     await fs.promises.writeFile('./.prettierignore', prettierignore)
-    await $`${pkgMgr} install --save-dev ${prettierPkgs}`
+
+    const commandString = pkgMgr === 'npm' ? 'install --save-dev' : 'add --save-dev';
+    await $`${pkgMgr} ${commandString} ${prettierPkgs}`
     return 'Prettier setup complete'
   } finally {
     spinner.stop()

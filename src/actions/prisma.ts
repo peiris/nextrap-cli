@@ -12,7 +12,10 @@ export const setupPrisma = async (pkgMgr: string, db: string) => {
       spinner.stop()
       return { message: 'Prisma already exist' }
     } catch {
-      const installPrisma = await $`${pkgMgr} install --save-dev prisma`
+      // Determine the correct command string based on the package manager
+      const commandString = pkgMgr === 'npm' ? 'install --save-dev' : 'add --save-dev';
+
+      const installPrisma = await $`${pkgMgr} ${commandString} prisma`
       await $`npx prisma init --datasource-provider ${db}`
       return installPrisma?.stderr
     }
