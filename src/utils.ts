@@ -2,7 +2,9 @@ import fs from 'fs'
 import chalk from 'chalk'
 import { createSpinner } from 'nanospinner'
 
-export const print = {
+type PrintFunction = (text: string) => string;
+
+export const print: Record<string, PrintFunction> = {
   success: (text: string) => chalk.hex('#a3e635')(text),
   question: (text: string) => chalk.hex('#4ade80')(text),
   complete: (text: string) => chalk.hex('#8b5cf6')(text),
