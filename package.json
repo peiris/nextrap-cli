@@ -9,7 +9,7 @@
   "scripts": {
     "dev": "tsc && (concurrently \"tsc -w\" \"tsc-alias -w\")",
     "build": "rm -rf dist && tsc --project tsconfig.json && tsc-alias -p tsconfig.json",
-    "npm-publish": "npm run build && npm publish"
+    "release": "pnpm run build && changeset publish"
   },
   "author": "@khpeiris",
   "license": "MIT",
