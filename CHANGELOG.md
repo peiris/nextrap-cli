@@ -1,5 +1,11 @@
 # nextrap-cli
 
+## 0.0.59
+
+### Patch Changes
+
+- 52e2519: fix yarn
+
 ## 0.0.58
 
 ### Patch Changes
