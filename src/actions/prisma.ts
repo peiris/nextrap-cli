@@ -3,7 +3,7 @@ import { $ } from 'execa'
 
 import { startSpinner } from '@/utils'
 
-export const setupPrisma = async (pkgMgr: string) => {
+export const setupPrisma = async (pkgMgr: string, db?: string | undefined = "mysql") => {
   const spinner = startSpinner(`Setting up prisma`)
 
   try {
@@ -13,7 +13,7 @@ export const setupPrisma = async (pkgMgr: string) => {
       return { message: 'Prisma already exist' }
     } catch {
       const installPrisma = await $`${pkgMgr} install --save-dev prisma`
-      await $`npx prisma init --datasource-provider mysql`
+      await $`npx prisma init --datasource-provider ${db}`
       return installPrisma?.stderr
     }
   } finally {

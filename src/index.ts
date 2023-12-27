@@ -86,7 +86,7 @@ const pkgMgr = await select({
   })
 
 const pkgs = await checkbox({
-  message: print.question('Select the packages you want to install'),
+  message: print.question('Select the packages you want to setup'),
   choices: cliPkgs,
 })
   .then((answers) => answers)
@@ -94,6 +94,27 @@ const pkgs = await checkbox({
     log.error(error?.stderr || error?.message)
     process.exit(1)
   })
+
+
+const db = pkgs.includes('prisma') ? await select({
+  message: print.question('Select your database'),
+  choices: [
+    { name: 'PostgreSQL', value: 'postgresql' },
+    { name: 'MySQL', value: 'mysql' },
+    { name: 'Mongo DB', value: 'mongodb' },
+    { name: 'SQLite', value: 'sqlite' },
+    { name: 'SQL Server', value: 'sqlserver' },
+  ],
+  default: 'mysql',
+})
+  .then((answers) => answers)
+  .catch((error) => {
+    log.error(error?.stderr || error?.message)
+    process.exit(1)
+  })
+: null
+
+console.log(db);
 
 isFresh
   ? await createNextApp(name)
@@ -138,7 +159,7 @@ if (pkgs.includes('lucide-icons')) {
 }
 
 if (pkgs.includes('prisma')) {
-  await setupPrisma(pkgMgr).catch((error) => {
+  await setupPrisma(pkgMgr, db).catch((error) => {
     log.error(error.message)
   })
 }

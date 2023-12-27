@@ -13,9 +13,7 @@ export const createNextApp = async (projectName: string) => {
   const spinner = startSpinner(`Setting up next.js app ${chalk.gray(
     '(This may take a while)',
   )}
-  
-  ${print.hint(
-    `— Typescript \n  — TailwindCSS \n  — ESLint \n  — Import alias [@/*] \n  — App directory`,
+  ${print.hint(`— Typescript \n  — TailwindCSS \n  — ESLint \n  — Import alias [@/*] \n  — App directory`,
   )}
   `)
 
