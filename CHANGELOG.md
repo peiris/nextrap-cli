@@ -1,5 +1,11 @@
 # nextrap-cli
 
+## 0.0.63
+
+### Patch Changes
+
+- c6ea3e2: Bug fixes
+
 ## 0.0.61
 
 ### Patch Changes
