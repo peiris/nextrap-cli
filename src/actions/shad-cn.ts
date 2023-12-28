@@ -1,8 +1,7 @@
 import fs from 'fs'
-import { $ } from 'execa'
-
 import { config } from '@/config'
 import { print, startSpinner } from '@/utils'
+import { $ } from 'execa'
 
 export const setupShadCnUI = async (template: string) => {
   await fs.promises.writeFile('./components.json', template)

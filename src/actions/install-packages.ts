@@ -1,7 +1,6 @@
-import { $ } from 'execa'
-
 import { requiredPkgs } from '@/config'
 import { print, startSpinner } from '@/utils'
+import { $ } from 'execa'
 
 export const installPackages = async (pkgMgr: string) => {
   const spinner = startSpinner(`Setting up essential packages
@@ -9,11 +8,11 @@ export const installPackages = async (pkgMgr: string) => {
   `)
 
   try {
-    const commandString = pkgMgr === 'npm' ? 'install --save-dev' : 'add --save-dev';
-    const command = await $`${pkgMgr} ${commandString} ${requiredPkgs}`;
-    return command?.stderr;
+    const commandString = pkgMgr === 'npm' ? 'install --save-dev' : 'add -D'
+    const command = await $`${pkgMgr} ${commandString} ${requiredPkgs}`
+    return command?.stderr
   } finally {
-    spinner.stop();
+    spinner.stop()
   }
 }
 

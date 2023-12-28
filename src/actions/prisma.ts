@@ -1,7 +1,6 @@
 import fs from 'fs'
-import { $ } from 'execa'
-
 import { startSpinner } from '@/utils'
+import { $ } from 'execa'
 
 export const setupPrisma = async (pkgMgr: string, db: string) => {
   const spinner = startSpinner(`Setting up prisma`)
@@ -13,7 +12,7 @@ export const setupPrisma = async (pkgMgr: string, db: string) => {
       return { message: 'Prisma already exist' }
     } catch {
       // Determine the correct command string based on the package manager
-      const commandString = pkgMgr === 'npm' ? 'install --save-dev' : 'add --save-dev';
+      const commandString = pkgMgr === 'npm' ? 'install --save-dev' : 'add -D'
 
       const installPrisma = await $`${pkgMgr} ${commandString} prisma`
       await $`npx prisma init --datasource-provider ${db}`
