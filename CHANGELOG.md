@@ -1,5 +1,11 @@
 # nextrap-cli
 
+## 0.0.61
+
+### Patch Changes
+
+- c05201c: Changed `yarn add --save-dev` to `yarn add -D`
+
 ## 0.0.59
 
 ### Patch Changes
