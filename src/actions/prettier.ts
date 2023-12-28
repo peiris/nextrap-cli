@@ -1,7 +1,7 @@
 import fs from 'fs'
 import { prettierPkgs } from '@/config'
 import { print, startSpinner } from '@/utils'
-import { $ } from 'execa'
+import { $, execa } from 'execa'
 
 export const setupPrettier = async ({
   prettierignore,
@@ -22,9 +22,17 @@ export const setupPrettier = async ({
     await fs.promises.writeFile('./.prettierrc', prettierrc)
     await fs.promises.writeFile('./.prettierignore', prettierignore)
 
-    const commandString = pkgMgr === 'npm' ? 'install --save-dev' : 'add -D'
-    await $`${pkgMgr} ${commandString} ${prettierPkgs}`
-    return 'Prettier setup complete'
+    if (pkgMgr === 'npm') {
+      const cmd = await execa(pkgMgr, [
+        'install',
+        '--save-dev',
+        ...prettierPkgs,
+      ])
+      return cmd?.stderr
+    } else {
+      const cmd = await execa(pkgMgr, ['add', '-D', ...prettierPkgs])
+      return cmd?.stderr
+    }
   } finally {
     spinner.stop()
   }
