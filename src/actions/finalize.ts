@@ -1,11 +1,13 @@
-import fs from 'fs'
-import { log, startSpinner } from '@/utils'
+import { checkAndDeleteFile, log, startSpinner } from '@/utils'
 import { $ } from 'execa'
 
 export const finalize = async (pkgMgr: string) => {
   const spinner = startSpinner(`Finalizing`)
-  await fs.promises.rm('./package-lock.json')
-  await fs.promises.rm('./pnpm-lock.yaml')
+
+  // Check and delete lock files
+  await checkAndDeleteFile('./package-lock.json')
+  await checkAndDeleteFile('./pnpm-lock.yaml')
+  await checkAndDeleteFile('./yarn-lock.yaml')
 
   try {
     await $`${pkgMgr} install`

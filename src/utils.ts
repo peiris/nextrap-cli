@@ -2,7 +2,7 @@ import fs from 'fs'
 import chalk from 'chalk'
 import { createSpinner } from 'nanospinner'
 
-type PrintFunction = (text: string) => string;
+type PrintFunction = (text: string) => string
 
 export const print: Record<string, PrintFunction> = {
   success: (text: string) => chalk.hex('#a3e635')(text),
@@ -47,5 +47,17 @@ export const fetchText = async (url: string) => {
   } catch (error) {
     log.error((error as Error).message)
     process.exit(1)
+  }
+}
+
+// Helper function to check for the existence of a file and delete it if it exists
+export const checkAndDeleteFile = async (filePath: string) => {
+  const fileExists = await fs.promises
+    .access(filePath)
+    .then(() => true)
+    .catch(() => false)
+
+  if (fileExists) {
+    await fs.promises.unlink(filePath)
   }
 }
